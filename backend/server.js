@@ -378,7 +378,7 @@ app.post('/api/predict', async (req, res) => {
     const symptomCount = Array.isArray(symptoms) ? symptoms.length : 0;
 
     // Send the mapped data to the Python FastAPI microservice
-    const pythonResponse = await axios.post('http://127.0.0.1:8000/predict_health_risk', {
+    const pythonResponse = await axios.post('https://lunaflow-ml.onrender.com', {
       age: age || 25,
       menstrual_cycle_length: cycleLength || 28,
       maternal_status: 0, 
