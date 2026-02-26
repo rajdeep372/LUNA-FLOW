@@ -82,7 +82,7 @@
 // };
 import { User, PeriodLog, UserProfile } from '../types';
 
-const API_URL = 'https://lunaflow-backend.onrender.com';
+const API_URL = 'https://lunaflow-backend.onrender.com/api';
 
 export const api = {
   login: async (email: string, password: string) => {
