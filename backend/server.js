@@ -203,7 +203,11 @@ const cors = require('cors');
 const axios = require('axios'); // Added axios for ML API communication
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['https://luna-flow-ryjt.onrender.com', 'http://localhost:5173'], // আপনার Render লিঙ্ক এবং লোকাল লিঙ্ক
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(express.json());
 
 // database connection
