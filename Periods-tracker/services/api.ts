@@ -82,7 +82,7 @@
 // };
 import { User, PeriodLog, UserProfile } from '../types';
 
-const API_URL = 'luna-flow-production.up.railway.app';
+const API_URL = 'http://localhost:5000/api';
 
 export const api = {
   login: async (email: string, password: string) => {
