@@ -383,7 +383,7 @@ app.post('/api/predict', async (req, res) => {
 
     // Send the mapped data to the Python FastAPI microservice
     const pythonResponse = await axios.post('https://lunaflow-ml.onrender.com/predict_health_risk', {
-      age: age || 25,
+      age: age || 24,
       menstrual_cycle_length: cycleLength || 28,
       maternal_status: 0, 
       period_duration: duration || 5,
