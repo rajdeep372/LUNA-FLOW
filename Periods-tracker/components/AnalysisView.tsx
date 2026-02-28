@@ -307,6 +307,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
 
   const isAnalysisGranted = logs.length >= 2;
 
+  // --- UPDATED: performAnalysis function with Full Fallback for both AI & ML ---
   const performAnalysis = async () => {
     if (logs.length < 2) {
       setError("Please add at least 2 period logs for a pattern analysis.");
@@ -316,28 +317,56 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     setError(null);
     
     try {
-      const geminiResult = await analyzeHealthRisks(logs, profile.age, profile.location);
+      // 1. প্রথমে Gemini API ট্রাই করবে (সেফটি বক্সের ভেতরে)
+      let geminiResult;
+      try {
+        geminiResult = await analyzeHealthRisks(logs, profile.age, profile.location);
+      } catch (geminiError) {
+        console.warn("Gemini API Error (API Key may be missing):", geminiError);
+        // Gemini ফেইল করলে এই ডামি ডেটাটা সেট হয়ে যাবে, যাতে পেজ ক্র্যাশ না করে
+        geminiResult = {
+          overallHealthScore: 0,
+          summary: "AI Wellness Plan is currently unavailable (API key missing or limit reached). Please refer to the Machine Learning Pattern Assessment.",
+          risks: [],
+          wellnessPlan: { 
+              dietChart: [], 
+              yogaPoses: [], 
+              foodHabits: ["AI recommendations are currently offline."] 
+          },
+          disclaimer: "Running in ML-Only mode because Gemini API is unavailable."
+        };
+      }
       setAnalysis(geminiResult);
 
+      // 2. এরপর Python ML সার্ভারকে কল করবে (আলাদা সেফটি বক্সের ভেতর)
       const latestLog = logs[0]; 
       
-      const mlResult = await api.predictHealthRisk({
-         age: profile.age,
-         cycleLength: latestLog.cycleLength || profile.averageCycleLength,
-         duration: latestLog.duration,
-         flowIntensity: latestLog.flowIntensity,
-         painLevel: latestLog.painLevel,
-         symptoms: latestLog.symptoms || []
-      });
+      try {
+        const mlResult = await api.predictHealthRisk({
+           age: profile.age,
+           cycleLength: latestLog.cycleLength || profile.averageCycleLength,
+           duration: latestLog.duration,
+           flowIntensity: latestLog.flowIntensity,
+           painLevel: latestLog.painLevel,
+           symptoms: latestLog.symptoms || []
+        });
 
-      setMlPrediction({
-          prediction: mlResult.prediction,
-          warning: mlResult.warning
-      });
+        setMlPrediction({
+            prediction: mlResult.prediction,
+            warning: mlResult.warning
+        });
+      } catch (mlError: any) {
+        console.error("Python ML Server Error:", mlError);
+        // Python সার্ভার কানেক্ট না হলে বক্সটা গায়েব না হয়ে এই মেসেজটা দেখাবে
+        setMlPrediction({
+            prediction: "Offline",
+            warning: "Cannot connect to the Machine Learning service. Please make sure your Python (Uvicorn/FastAPI) server is running in the background."
+        });
+      }
 
     } catch (err: any) {
-      setError(err.message || "Failed to analyze health data. Please check your API connection.");
-      console.error(err);
+      console.error("Unexpected error:", err);
+      setError("Something went wrong while processing the analysis.");
     } finally {
       setLoading(false);
     }
@@ -485,7 +514,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                         <h2 className="text-xl font-bold mb-1 uppercase tracking-tight">Cycle Vitality Score</h2>
                         {profile.location && (
                             <div className="flex items-center justify-center md:justify-start gap-1.5 mt-1 text-white/70 text-xs">
-                            <MapPin size={12} /> Kolkata, West Bengal Region
+                            <MapPin size={12} /> {profile.location} Region
                             </div>
                         )}
                     </div>
@@ -521,18 +550,18 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
               {mlPrediction && (
                   <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col justify-center h-full">
                       <div className="flex items-center gap-3 mb-4">
-                          <div className={`p-3 rounded-xl ${mlPrediction.prediction === 'None' || mlPrediction.prediction === 'Normal' ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'}`}>
+                          <div className={`p-3 rounded-xl ${mlPrediction.prediction === 'None' || mlPrediction.prediction === 'Normal' ? 'bg-emerald-50 text-emerald-500' : (mlPrediction.prediction === 'Offline' ? 'bg-slate-100 text-slate-500' : 'bg-rose-50 text-rose-500')}`}>
                               <Activity size={24} />
                           </div>
                           <div>
                               <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">ML Pattern Assessment</h3>
-                              <p className={`text-2xl font-black ${mlPrediction.prediction === 'None' || mlPrediction.prediction === 'Normal' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                              <p className={`text-2xl font-black ${mlPrediction.prediction === 'None' || mlPrediction.prediction === 'Normal' ? 'text-emerald-500' : (mlPrediction.prediction === 'Offline' ? 'text-slate-500' : 'text-rose-500')}`}>
                                   {mlPrediction.prediction === 'None' ? 'No Risk Detected' : mlPrediction.prediction}
                               </p>
                           </div>
                       </div>
                       <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl text-slate-600 text-sm flex gap-3 items-start mt-auto">
-                          <AlertTriangle size={16} className="shrink-0 mt-0.5 text-slate-400" />
+                          <AlertTriangle size={16} className={`shrink-0 mt-0.5 ${mlPrediction.prediction === 'Offline' ? 'text-slate-400' : 'text-slate-400'}`} />
                           <p className="leading-relaxed text-xs">{mlPrediction.warning}</p>
                       </div>
                   </div>
@@ -575,7 +604,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                   <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
                     <Utensils className="text-orange-500" /> Regional Diet Chart
                   </h3>
-                  {profile.location && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full whitespace-nowrap">Kolkata, West Bengal Focus</span>}
+                  {profile.location && <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full whitespace-nowrap">{profile.location} Focus</span>}
                 </div>
                 <div className="space-y-4">
                   {analysis.wellnessPlan.dietChart.map((item, idx) => (
@@ -616,7 +645,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                   ))}
                 </ul>
                 <div className="mt-8 pt-8 border-t border-slate-50 italic text-[11px] text-slate-400">
-                  Tip: These suggestions take into account locally available ingredients common in the Kolkata, West Bengal region.
+                  Tip: These suggestions take into account locally available ingredients common in your region.
                 </div>
               </div>
             </div>
