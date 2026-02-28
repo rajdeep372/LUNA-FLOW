@@ -1,33 +1,127 @@
+// import { GoogleGenAI, Type } from "@google/genai";
+// import { PeriodLog, AnalysisResult } from "../types";
+
+// export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
+//   // Use process.env.API_KEY directly as mapped in vite.config.ts
+// // gemini.ts ফাইলের শুরুতে এটি লেখো
+// const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
+// console.log("Checking API Key availability...");
+//   if (!apiKey) {
+//   throw new Error("Render Environment Variable (VITE_GEMINI_API_KEY) খুঁজে পাওয়া যাচ্ছে না।");
+// }
+
+//   const ai = new GoogleGenAI({ apiKey });
+  
+//   const historyString = logs.map(l => 
+//     `Cycle: ${l.cycleLength} days, Duration: ${l.duration} days, Flow: ${l.flowIntensity}, Pain: ${l.painLevel}, Symptoms: ${l.symptoms.join(', ')}`
+//   ).join('\n');
+
+//   const locationContext = location ? `The user is located in or near: ${location}. Please ensure the diet recommendations (ingredients, meals) are locally available, culturally appropriate, and relevant to this region.` : "";
+
+//   try {
+//     const response = await ai.models.generateContent({
+//       model: 'gemini-1.5-flash-latest', 
+//       contents: `Analyze the following menstrual health data for a ${age}-year-old female and detect potential health risks. 
+//       Crucially, provide a personalized wellness plan including specific food habits, a daily diet chart (Breakfast, Lunch, Dinner, Snacks), and specific Yoga poses suited for their symptoms.
+      
+//       ${locationContext}
+
+//       Current Data:
+//       ${historyString}`,
+//       config: {
+//         responseMimeType: "application/json",
+//         responseSchema: {
+//           type: Type.OBJECT,
+//           properties: {
+//             overallHealthScore: { type: Type.NUMBER },
+//             summary: { type: Type.STRING },
+//             risks: {
+//               type: Type.ARRAY,
+//               items: {
+//                 type: Type.OBJECT,
+//                 properties: {
+//                   condition: { type: Type.STRING },
+//                   riskLevel: { type: Type.STRING, enum: ["Low", "Moderate", "High"] },
+//                   reasoning: { type: Type.STRING },
+//                   recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }
+//                 },
+//                 required: ["condition", "riskLevel", "reasoning", "recommendations"]
+//               }
+//             },
+//             wellnessPlan: {
+//               type: Type.OBJECT,
+//               properties: {
+//                 dietChart: {
+//                   type: Type.ARRAY,
+//                   items: {
+//                     type: Type.OBJECT,
+//                     properties: {
+//                       meal: { type: Type.STRING },
+//                       recommendation: { type: Type.STRING }
+//                     },
+//                     required: ["meal", "recommendation"]
+//                   }
+//                 },
+//                 yogaPoses: {
+//                   type: Type.ARRAY,
+//                   items: {
+//                     type: Type.OBJECT,
+//                     properties: {
+//                       name: { type: Type.STRING },
+//                       benefit: { type: Type.STRING }
+//                     },
+//                     required: ["name", "benefit"]
+//                   }
+//                 },
+//                 foodHabits: { type: Type.ARRAY, items: { type: Type.STRING } }
+//               },
+//               required: ["dietChart", "yogaPoses", "foodHabits"]
+//             },
+//             disclaimer: { type: Type.STRING }
+//           },
+//           required: ["overallHealthScore", "summary", "risks", "wellnessPlan", "disclaimer"]
+//         }
+//       }
+//     });
+
+//     const text = response.text;
+//     if (!text) throw new Error("Empty response from AI");
+//     return JSON.parse(text.trim());
+//   } catch (err: any) {
+//     console.error("Gemini API Error details:", err);
+//     // Extract a readable message from the error object
+//     const errorMessage = err?.message || "Unknown API error";
+//     throw new Error(`API Error: ${errorMessage}`);
+//   }
+// };
 import { GoogleGenAI, Type } from "@google/genai";
 import { PeriodLog, AnalysisResult } from "../types";
 
 export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
+  // ১. Key ডাকার সবচেয়ে নিরাপদ উপায়
   const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
 
-  if (!apiKey || apiKey === 'undefined') {
-    throw new Error("API Key is missing in Render Environment.");
+  if (!apiKey) {
+    throw new Error("API Key খুঁজে পাওয়া যাচ্ছে না।");
   }
 
-  // ১. সরাসরি apiKey দাও (অবজেক্ট {} দেবে না)
-  const genAI = new GoogleGenAI(apiKey); 
-
+  // পরিবর্তন ১: এখানে {} সরিয়ে দিয়েছি। গুগল সরাসরি 'apiKey' স্ট্রিং চায়। 
+  // এটি না সরালে গুগল থেকে 404 এরর আসবে।
+  const ai = new GoogleGenAI(apiKey); 
+  
   const historyString = logs.map(l => 
-    `Cycle: ${l.cycleLength}d, Duration: ${l.duration}d, Flow: ${l.flowIntensity}, Pain: ${l.painLevel}, Symptoms: ${l.symptoms.join(', ')}`
+    `Cycle: ${l.cycleLength} days, Duration: ${l.duration} days, Flow: ${l.flowIntensity}, Pain: ${l.painLevel}, Symptoms: ${l.symptoms.join(', ')}`
   ).join('\n');
 
-  const locationContext = location ? `User location: ${location}.` : "";
+  const locationContext = location ? `The user is located in or near: ${location}.` : "";
 
   try {
-    // ২. একদম স্টেবল মডেলের নাম ব্যবহার করো
-   // এভাবে লিখে দেখো লাল দাগ যায় কি না
-const model = (genAI as any).getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const prompt = `Analyze menstrual health for a ${age}-year-old female. ${locationContext} Data:\n${historyString}`;
-
-    // ৩. নতুন পদ্ধতিতে জেনারেট করো যা 404 এরর দেবে না
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
+    // পরিবর্তন ২: মডেলের নাম 'gemini-1.5-flash' করে দিয়েছি। 
+    // তোমার আগের কোডে 'latest' থাকায় গুগল ওটা খুঁজে পাচ্ছিল না।
+    const response = await ai.models.generateContent({
+      model: 'gemini-1.5-flash', 
+      contents: `Analyze health for a ${age}-year-old female. ${locationContext}\nData:\n${historyString}`,
+      config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -40,7 +134,7 @@ const model = (genAI as any).getGenerativeModel({ model: "gemini-1.5-flash" });
                 type: Type.OBJECT,
                 properties: {
                   condition: { type: Type.STRING },
-                  riskLevel: { type: Type.STRING },
+                  riskLevel: { type: Type.STRING, enum: ["Low", "Moderate", "High"] },
                   reasoning: { type: Type.STRING },
                   recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }
                 },
@@ -79,16 +173,15 @@ const model = (genAI as any).getGenerativeModel({ model: "gemini-1.5-flash" });
             disclaimer: { type: Type.STRING }
           },
           required: ["overallHealthScore", "summary", "risks", "wellnessPlan", "disclaimer"]
-        },
+        }
       }
     });
 
-    const response = await result.response;
-    const text = response.text();
+    const text = response.text;
+    if (!text) throw new Error("Empty response");
     return JSON.parse(text.trim());
-    
   } catch (err: any) {
-    console.error("Gemini API Error details:", err);
-    throw new Error(`API Error: ${err?.message || "Something went wrong"}`);
+    console.error("Gemini Error:", err);
+    throw new Error(`API Error: ${err?.message || "Unknown error"}`);
   }
 };
