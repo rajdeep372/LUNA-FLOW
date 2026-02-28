@@ -3,7 +3,8 @@ import { PeriodLog, AnalysisResult } from "../types";
 
 export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
   // Use process.env.API_KEY directly as mapped in vite.config.ts
-const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
+// gemini.ts ফাইলের শুরুতে এটি লেখো
+const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
 console.log("Checking API Key availability...");
   if (!apiKey) {
   throw new Error("Render Environment Variable (VITE_GEMINI_API_KEY) খুঁজে পাওয়া যাচ্ছে না।");
