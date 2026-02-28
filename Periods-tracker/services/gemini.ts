@@ -20,7 +20,7 @@ console.log("Checking API Key availability...");
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash', 
+      model: 'gemini-1.5-flash-latest', 
       contents: `Analyze the following menstrual health data for a ${age}-year-old female and detect potential health risks. 
       Crucially, provide a personalized wellness plan including specific food habits, a daily diet chart (Breakfast, Lunch, Dinner, Snacks), and specific Yoga poses suited for their symptoms.
       
