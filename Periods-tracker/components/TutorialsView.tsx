@@ -168,7 +168,7 @@ const TUTORIAL_VIDEOS = [
     id: '3',
     title: 'Complete Guide to Menstrual Hygiene',
     category: 'Hygiene', // Fixed the typo here
-    embedId: 'j8eB-tI_D9c',
+    embedId: 'QXK6l9RSJ80',
     duration: '15 mins',
     description: 'Best practices for using pads, tampons, and menstrual cups safely.',
     language: 'English'
