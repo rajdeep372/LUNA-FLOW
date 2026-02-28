@@ -301,13 +301,12 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // States for Saving Analysis
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   const isAnalysisGranted = logs.length >= 2;
 
-  // --- UPDATED: performAnalysis function powered 100% by ML with Rich Location-Based Content ---
+  // --- UPDATED: ML for Score/Prediction & Gemini for Diet/Yoga/Foods ---
   const performAnalysis = async () => {
     if (logs.length < 2) {
       setError("Please add at least 2 period logs for a pattern analysis.");
@@ -317,111 +316,70 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     setError(null);
     
     try {
-      // ১. শুধুমাত্র তোমার Python ML সার্ভারকে কল করা হলো (Gemini পুরোপুরি বাদ)
+      // ১. প্রথমে Python ML সার্ভারকে কল করা হলো (বেগুনি বক্স এবং ML বক্সের জন্য)
       const latestLog = logs[0]; 
+      let mlResult;
       
-      const mlResult = await api.predictHealthRisk({
-         age: profile.age,
-         cycleLength: latestLog.cycleLength || profile.averageCycleLength,
-         duration: latestLog.duration,
-         flowIntensity: latestLog.flowIntensity,
-         painLevel: latestLog.painLevel,
-         symptoms: latestLog.symptoms || []
-      });
+      try {
+        mlResult = await api.predictHealthRisk({
+           age: profile.age,
+           cycleLength: latestLog.cycleLength || profile.averageCycleLength,
+           duration: latestLog.duration,
+           flowIntensity: latestLog.flowIntensity,
+           painLevel: latestLog.painLevel,
+           symptoms: latestLog.symptoms || []
+        });
+      } catch (mlErr) {
+        console.error("Python ML Error:", mlErr);
+        mlResult = { prediction: "Offline", warning: "Machine Learning service is not responding." };
+      }
 
       setMlPrediction({
           prediction: mlResult.prediction,
           warning: mlResult.warning
       });
 
-      // ২. ডায়নামিক স্কোর ক্যালকুলেশন
+      // ML-এর ওপর ভিত্তি করে বেগুনি বক্সের স্কোর
       let calculatedScore = 88; 
       if (mlResult.prediction.includes('PCOS') || mlResult.prediction.includes('ANEMIA')) {
           calculatedScore = 52; 
-      } else if (mlResult.prediction !== 'None' && mlResult.prediction !== 'Normal') {
+      } else if (mlResult.prediction !== 'None' && mlResult.prediction !== 'Normal' && mlResult.prediction !== 'Offline') {
           calculatedScore = 65;
+      } else if (mlResult.prediction === 'Offline') {
+          calculatedScore = 0;
       }
 
-      // ৩. লোকেশন এবং রোগের ওপর ভিত্তি করে ডিটেইলড ডায়েট ও ইয়োগা চার্ট তৈরি (Gemini-এর বিকল্প)
-      const loc = profile.location?.toLowerCase() || '';
-      const isBengal = loc.includes('kolkata') || loc.includes('bengal') || loc.includes('india');
-      
-      let dynamicDietChart = [];
-      let dynamicYogaPoses = [];
-      let dynamicFoodHabits = [];
-
-      if (mlResult.prediction.includes('PCOS')) {
-          dynamicDietChart = [
-              { meal: "Morning", recommendation: isBengal ? "Methi (fenugreek) soaked water, followed by soaked almonds and pumpkin seeds." : "Warm water with apple cider vinegar, and mixed nuts." },
-              { meal: "Lunch", recommendation: isBengal ? "Multigrain roti with dal, a bowl of tok doi (curd), and low-GI vegetables like bitter gourd (korola)." : "Quinoa or brown rice with lentils and a fresh green salad." },
-              { meal: "Dinner", recommendation: "Light meal like grilled paneer or chicken stew with vegetable soup. Avoid white rice at night." }
-          ];
-          dynamicYogaPoses = [
-              { name: "Supta Baddha Konasana (Reclining Butterfly)", benefit: "Stimulates the ovaries and improves blood circulation in the pelvic region." },
-              { name: "Bhujangasana (Cobra Pose)", benefit: "Helps relieve menstrual cramps and reduces stress hormones." }
-          ];
-          dynamicFoodHabits = [
-              "Strictly avoid processed sugars and local sweets (like rosogolla/sandesh) to manage insulin resistance.",
-              "Engage in at least 30-40 minutes of brisk walking or cardio daily.",
-              "Include more fiber-rich local greens in your daily meals."
-          ];
-      } else if (mlResult.prediction.includes('ANEMIA') || mlResult.prediction.includes('Menorrhagia') || mlResult.prediction.includes('Dysmenorrhea')) {
-          dynamicDietChart = [
-              { meal: "Morning", recommendation: isBengal ? "Amla juice or beetroot-carrot juice. Eat 2-3 dates (khejur) and soaked raisins." : "Iron-fortified smoothie with spinach, beetroot, and a citrus fruit." },
-              { meal: "Lunch", recommendation: isBengal ? "Rice with masoor dal, cooked dark leafy greens (lal shak/palak), and a slice of lemon for Vitamin C." : "Lentil soup with spinach and a side of citrus salad." },
-              { meal: "Dinner", recommendation: isBengal ? "Chicken stew or soyabean curry with two rotis. Snack on roasted chana and jaggery (gur)." : "Lean meat or tofu with quinoa and steamed broccoli." }
-          ];
-          dynamicYogaPoses = [
-              { name: "Viparita Karani (Legs Up The Wall)", benefit: "Relaxes the nervous system and improves blood flow to the pelvic area." },
-              { name: "Balasana (Child's Pose)", benefit: "Gently stretches the lower back and relieves fatigue caused by heavy flow." }
-          ];
-          dynamicFoodHabits = [
-              "Avoid drinking tea or coffee immediately after meals as it blocks iron absorption.",
-              "Pair iron-rich foods with Vitamin C (like lemon/amla) for better absorption.",
-              "Try cooking your meals in a traditional cast-iron pan/kadhai to boost iron levels."
-          ];
-      } else {
-          // Normal/Healthy Cycle
-          dynamicDietChart = [
-              { meal: "Morning", recommendation: "Warm water with lemon and honey. A small bowl of fresh seasonal fruits." },
-              { meal: "Lunch", recommendation: isBengal ? "Standard thali: Rice/Roti, dal, seasonal vegetable curry (tarkari), and a piece of fish or paneer." : "Balanced meal with complex carbs, lean protein, and mixed vegetables." },
-              { meal: "Dinner", recommendation: "Light vegetable khichdi or two rotis with easily digestible dal (like moong)." }
-          ];
-          dynamicYogaPoses = [
-              { name: "Baddha Konasana (Butterfly Pose)", benefit: "Helps open the hips and relieves mild menstrual cramps and discomfort." },
-              { name: "Paschimottanasana (Seated Forward Bend)", benefit: "Calms the mind, relieves stress, and soothes the pelvic organs." }
-          ];
-          dynamicFoodHabits = [
-              "Drink at least 2.5 to 3 liters of water daily to stay hydrated.",
-              "Maintain a consistent sleep schedule of 7-8 hours per night.",
-              "Incorporate local, seasonal vegetables and fresh yogurt into your daily diet."
-          ];
+      // ২. এবার Gemini API-কে কল করা হলো (শুধুমাত্র Diet, Yoga, Foods-এর জন্য)
+      let geminiWellnessPlan;
+      try {
+        const geminiResult = await analyzeHealthRisks(logs, profile.age, profile.location);
+        geminiWellnessPlan = geminiResult.wellnessPlan; // Gemini-এর আসল ডায়েট আর ইয়োগা নিয়ে নিলাম
+      } catch (geminiError) {
+        console.warn("Gemini Error:", geminiError);
+        geminiWellnessPlan = {
+            dietChart: [{ meal: "Error", recommendation: "Gemini API is offline or API Key is missing." }],
+            yogaPoses: [{ name: "Error", benefit: "Cannot load yoga routines without Gemini API." }],
+            foodHabits: ["Gemini API is currently unavailable."]
+        };
       }
 
-      // ৪. বেগুনি বক্স এবং ওয়েলনেস প্ল্যানের জন্য ডেটা সেট করা
+      // ৩. ML এবং Gemini-কে একসাথে জুড়ে বেগুনি বক্স তৈরি করা
       setAnalysis({
-        overallHealthScore: calculatedScore,
-        summary: `Machine Learning Assessment: This result is based on pattern analysis for awareness purposes. Based on your logged data, the model pattern suggests a status of: ${mlResult.prediction === 'None' ? 'Healthy/Normal' : mlResult.prediction}.`,
-        
-        risks: [], // Secondary health indicators removed from UI as requested earlier
-        
-        wellnessPlan: { 
-            dietChart: dynamicDietChart, 
-            yogaPoses: dynamicYogaPoses, 
-            foodHabits: dynamicFoodHabits 
-        },
-        disclaimer: "This analysis is purely generated by your local Machine Learning model, taking your region into account."
+        overallHealthScore: calculatedScore, // ML দিচ্ছে
+        summary: `Machine Learning Assessment: ${mlResult.warning} Based on your logged data, the model pattern suggests a status of: ${mlResult.prediction === 'None' ? 'Healthy/Normal' : mlResult.prediction}.`, // ML দিচ্ছে
+        risks: [], // তোমার কথামতো মাঝখানের রোগগুলো হাইড করা আছে
+        wellnessPlan: geminiWellnessPlan, // ১০০% Gemini দিচ্ছে
+        disclaimer: "Health Score and ML Assessment powered by Python ML. Diet, Yoga, and Food habits generated by Gemini AI."
       });
 
     } catch (err: any) {
-      console.error("Python ML Server Error:", err);
-      setError("Cannot connect to the Machine Learning service. Is your Python server running?");
+      console.error("Unexpected Error:", err);
+      setError("Something went wrong while processing the analysis.");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- SMART Save Analysis Function ---
   const handleSaveAnalysis = async () => {
     if (!analysis || !mlPrediction) return;
     setIsSaving(true);
@@ -429,7 +387,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
 
     try {
       let userId = null;
-
       const userStr = localStorage.getItem('user');
       if (userStr) {
           try {
@@ -437,24 +394,16 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
               userId = userObj._id || userObj.id;
           } catch (e) {}
       }
-      
-      if (!userId) {
-          userId = localStorage.getItem('userId');
-      }
-
+      if (!userId) userId = localStorage.getItem('userId');
       if (!userId && logs.length > 0) {
           // @ts-ignore
           userId = logs[0].userId;
       }
 
-      if (!userId) {
-          throw new Error("User ID not found. Please log out and log in again.");
-      }
+      if (!userId) throw new Error("User ID not found. Please log out and log in again.");
 
       await api.saveAnalysis(userId as string, analysis, mlPrediction);
-      
       setSaveMessage({ type: 'success', text: 'Analysis saved successfully!' });
-      
       setTimeout(() => setSaveMessage(null), 3000);
     } catch (err: any) {
       setSaveMessage({ type: 'error', text: err.message || 'Failed to save analysis.' });
@@ -538,10 +487,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
       {analysis && (
         <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
           
-          {/* Top Row: Score Card & ML Prediction */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {/* 1. Cycle Vitality Score */}
               <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-500 rounded-3xl p-8 text-white shadow-xl flex flex-col items-center md:items-start text-center md:text-left h-full">
                 <div className="flex flex-col md:flex-row items-center gap-6 w-full mb-4">
                     <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
@@ -562,13 +508,11 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                 </div>
                 <p className="text-indigo-50 leading-relaxed text-sm opacity-90 flex-grow">{analysis.summary}</p>
                 
-                {/* Update Data & Save Analysis Buttons Container */}
                 <div className="flex flex-col gap-2 mt-4 self-center md:self-start">
                   <div className="flex items-center gap-3">
                     <button onClick={() => setAnalysis(null)} className="text-white bg-white/10 hover:bg-white/20 text-xs font-bold border border-white/20 rounded-xl px-4 py-2 transition-all">
                         Update Data
                     </button>
-                    
                     <button 
                       onClick={handleSaveAnalysis} 
                       disabled={isSaving}
@@ -578,7 +522,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                       {isSaving ? 'Saving...' : 'Save Analysis'}
                     </button>
                   </div>
-                  
                   {saveMessage && (
                     <div className={`text-xs font-medium px-3 py-1.5 rounded-lg inline-block ${saveMessage.type === 'success' ? 'bg-emerald-500/20 text-emerald-50' : 'bg-rose-500/20 text-rose-50'}`}>
                       {saveMessage.text}
@@ -587,7 +530,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                 </div>
               </div>
 
-              {/* 2. ML Pattern Prediction Box */}
               {mlPrediction && (
                   <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm flex flex-col justify-center h-full">
                       <div className="flex items-center gap-3 mb-4">
@@ -609,7 +551,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
               )}
           </div>
 
-          {/* Wellness Plan: Diet and Habits */}
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
@@ -664,7 +605,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
             </div>
           </section>
 
-          {/* Footer Disclaimer */}
           <div className="bg-amber-50 border border-amber-200 p-6 rounded-3xl flex flex-col sm:flex-row gap-4 text-amber-800 text-sm shadow-sm shadow-amber-100 items-start">
             <AlertTriangle size={24} className="shrink-0 text-amber-500" />
             <div>
