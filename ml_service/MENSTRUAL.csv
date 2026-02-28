@@ -1,37 +1,113 @@
-Name,MONTH,AGE,MENSTRUAL CYCLE,METERNAL STATUS,START DATE,END DATE,BLOOD FLOW,PAIN LEVEL,SYMPTOMS,Any disease
-IR,January,21,NORMAL CYCLE,NON-PREGNANT,1/20/2026,1/25/2026,Medium,Medium,Cramps,None
-D.D,February,20,NORMAL CYCLE,NON-PREGNANT,02-01-2026,02-04-2026,Medium,Medium,"Fatigue, Cramps, Acne",None
-Srijita das,January,21,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/28/2026,Medium,Medium,"Cramps, Mood Swings, Acne",HORMONAL DISORDER
-M.C,April,21,MISSED CYCLE,NON-PREGNANT,02-01-2026,02-08-2026,HIGH,Medium,Mood Swings,PCOS
-S.G,February,20,NORMAL CYCLE,NON-PREGNANT,2/18/2026,2/23/2026,Medium,Low,NONE,None
-A.N,February,24,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/16/2026,HIGH,Medium,"Cramps, Mood Swings",ANEMIA
-A.Das,February,19,NORMAL CYCLE,NON-PREGNANT,2/18/2026,2/21/2026,Medium,HIGH,"Cramps, Mood Swings",None
-K.S,February,19,NORMAL CYCLE,NON-PREGNANT,02-01-2026,02-05-2026,Medium,Low,"Mood Swings, Weight Change",None
-S.D,January,20,NORMAL CYCLE,NON-PREGNANT,1/14/2026,1/16/2026,Medium,Low,"Fatigue, Headache, Acne",None
-S.A,February,24,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/16/2026,Medium,Low,"Cramps, Mood Swings",HORMONAL DISORDER
-Rumela Sarkar,February,19,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/14/2026,Medium,Low,NONE,None
-A.M,February,31,NORMAL CYCLE,NON-PREGNANT,02-02-2026,02-07-2026,Medium,Low,Others,PCOS
-S.H,February,22,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/18/2026,Low,Low,NONE,None
-SP ,June,22,MISSED CYCLE,NON-PREGNANT,01-01-2026,01-06-2026,Medium,Medium,"Cramps, Headache, Mood Swings, Weight Change","PCOS, ANEMIA"
-S.P,February,20,NORMAL CYCLE,NON-PREGNANT,02-04-2026,02-11-2026,Medium,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Weight Change, Nausea",None
-D.S,January,30,NORMAL CYCLE,NON-PREGNANT,01-02-2026,01-05-2026,HIGH,HIGH,Headache,None
-A.M,February,21,NORMAL CYCLE,NON-PREGNANT,1/30/2026,02-03-2026,Medium,Medium,"Fatigue, Cramps, Headache, Mood Swings, Acne","Premenstrual Syndrome(PMS), Dysmenorrhea"
-A. S,February,20,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/21/2026,Medium,Medium,NONE,None
-S.D,February,23,NORMAL CYCLE,NON-PREGNANT,2/23/2026,2/27/2026,Low,Medium,"Cramps, Mood Swings, Others",None
-S.m,February,19,NORMAL CYCLE,NON-PREGNANT,2/21/0026,2/26/0026,Medium,Medium,"Cramps, Headache, Mood Swings",None
-Soumili Bagh,January,23,NORMAL CYCLE,NON-PREGNANT,01-09-2026,1/14/2026,Medium,Medium,"Fatigue, Cramps, Headache, Acne, Nausea",PCOS
-S.patra,February,21,MISSED CYCLE,NON-PREGNANT,2/18/2026,2/23/2026,HIGH,HIGH,"Fatigue, Cramps, Mood Swings, Acne",PCOS
-A.B,January,20,NORMAL CYCLE,NON-PREGNANT,12/31/2025,01-03-2026,Medium,Low,NONE,None
-K.chakraborty,January,23,NORMAL CYCLE,NON-PREGNANT,1/31/2026,02-05-2026,Medium,Medium,"Cramps, Mood Swings",None
-S.D,February,34,NORMAL CYCLE,NON-PREGNANT,2/14/2026,2/18/2026,Medium,Low,Acne,PCOS
-S.G,February,20,MISSED CYCLE,NON-PREGNANT,2/19/2026,2/23/2026,Medium,HIGH,"Cramps, Mood Swings",None
-Supriti Ghosh ,February,20+,NORMAL CYCLE,NON-PREGNANT,2/14/0026,12/18/0026,Medium,HIGH,"Cramps, Mood Swings","Premenstrual Syndrome(PMS), Dysmenorrhea"
-S. D.,February,20,NORMAL CYCLE,NON-PREGNANT,2/17/2026,2/22/2026,HIGH,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Nausea","PCOS, ANEMIA"
-TS,February,22,NORMAL CYCLE,NON-PREGNANT,02-08-2026,2/13/2026,HIGH,Medium,"Fatigue, Cramps, Mood Swings, Acne",None
-Pushparita Roy ,February,22,NORMAL CYCLE,NON-PREGNANT,2/24/2026,2/27/2026,HIGH,Medium,"Cramps, Headache, Mood Swings, Acne",None
-Ishika,February,23,MISSED CYCLE,NON-PREGNANT,02-04-2026,02-07-2026,Medium,Medium,"Cramps, Headache, Acne, Nausea",Others
-N.k,February,21,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/16/2026,Medium,HIGH,"Cramps, Headache, Mood Swings, Acne, Nausea",PCOS
-M.S.,January,39,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/29/2026,HIGH,Medium,"Fatigue, Cramps, Headache, Mood Swings, Nausea",None
-Sampa Das,January,30,NORMAL CYCLE,NON-PREGNANT,1/31/2026,02-08-2026,HIGH,Low,NONE,None
-Smriti Chanak ,January,21,NORMAL CYCLE,NON-PREGNANT,02-04-2026,02-08-2026,Medium,Low,NONE,None
-Srabani Das,January,40,NORMAL CYCLE,NON-PREGNANT,1/19/2026,1/23/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings",None
+Timestamp,NAME IN SHORT(S.D),MONTH (2026),AGE,MENSTRUAL CYCLE,METERNAL STATUS,START DATE(DD/MM/YY),END DATE(DD/MM/YY),BLOOD FLOW,PAIN LEVEL,SYMPTOMS,Any disease
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+2/18/2026 20:23:16,IR,January,21,NORMAL CYCLE,NON-PREGNANT,1/20/2026,1/25/2026,Medium,Medium,Cramps,None
+2/18/2026 20:26:53,D.D,February,20,NORMAL CYCLE,NON-PREGNANT,02-01-2026,02-04-2026,Medium,Medium,"Fatigue, Cramps, Acne",None
+2/18/2026 20:40:36,Srijita das,January,21,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/28/2026,Medium,Medium,"Cramps, Mood Swings, Acne",HORMONAL DISORDER
+2/18/2026 20:41:13,M.C,February,21,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,Mood Swings,PCOS
+2/18/2026 20:41:17,S.G,February,20,NORMAL CYCLE,NON-PREGNANT,2/18/2026,2/23/2026,Medium,Low,NONE,None
+2/18/2026 20:45:41,A.N,February,24,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/16/2026,HIGH,Medium,"Cramps, Mood Swings",ANEMIA
+2/18/2026 20:48:54,A.Das,February,19,NORMAL CYCLE,NON-PREGNANT,2/18/2026,2/21/2026,Medium,HIGH,"Cramps, Mood Swings",None
+2/18/2026 20:53:38,K.S,February,19,NORMAL CYCLE,NON-PREGNANT,02-01-2026,02-05-2026,Medium,Low,"Mood Swings, Weight Change",None
+2/18/2026 20:57:56,S.D,January,20,NORMAL CYCLE,NON-PREGNANT,1/14/2026,1/16/2026,Medium,Low,"Fatigue, Headache, Acne",None
+2/18/2026 21:06:50,S.A,February,24,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/16/2026,Medium,Low,"Cramps, Mood Swings",HORMONAL DISORDER
+2/18/2026 21:09:04,Rumela Sarkar,February,19,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/14/2026,Medium,Low,NONE,None
+2/18/2026 21:15:00,A.M,February,31,NORMAL CYCLE,NON-PREGNANT,02-02-2026,02-07-2026,Medium,Low,Others,PCOS
+2/18/2026 21:16:01,S.H,February,22,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/18/2026,Low,Low,NONE,None
+2/18/2026 21:18:38,SP ,February,22,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,"Cramps, Headache, Mood Swings, Weight Change","PCOS, ANEMIA"
+2/18/2026 21:24:24,S.P,February,20,NORMAL CYCLE,NON-PREGNANT,02-04-2026,02-11-2026,Medium,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Weight Change, Nausea",None
+2/18/2026 21:31:17,D.S,January,30,NORMAL CYCLE,NON-PREGNANT,01-02-2026,01-05-2026,HIGH,HIGH,Headache,None
+2/18/2026 21:36:44,A.M,February,21,NORMAL CYCLE,NON-PREGNANT,1/30/2026,02-03-2026,Medium,Medium,"Fatigue, Cramps, Headache, Mood Swings, Acne","Premenstrual Syndrome(PMS), Dysmenorrhea"
+2/18/2026 22:22:33,A. S,February,20,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/21/2026,Medium,Medium,NONE,None
+2/18/2026 22:49:07,S.D,February,23,NORMAL CYCLE,NON-PREGNANT,2/23/2026,2/27/2026,Low,Medium,"Cramps, Mood Swings, Others",None
+2/18/2026 23:09:25,S.m,February,19,NORMAL CYCLE,NON-PREGNANT,2/21/0026,2/26/0026,Medium,Medium,"Cramps, Headache, Mood Swings",None
+2/19/2026 8:10:06,Soumili Bagh,January,23,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,"Fatigue, Cramps, Headache, Acne, Nausea",PCOS
+2/19/2026 12:20:24,S.patra,February,21,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,HIGH,"Fatigue, Cramps, Mood Swings, Acne",PCOS
+2/19/2026 12:32:55,A.B,January,20,NORMAL CYCLE,NON-PREGNANT,12/31/2025,01-03-2026,Medium,Low,NONE,None
+2/19/2026 12:34:46,K.chakraborty,January,23,NORMAL CYCLE,NON-PREGNANT,1/31/2026,02-05-2026,Medium,Medium,"Cramps, Mood Swings",None
+2/19/2026 12:44:21,S.D,February,34,NORMAL CYCLE,NON-PREGNANT,2/14/2026,2/18/2026,Medium,Low,Acne,PCOS
+2/19/2026 12:52:15,S.G,February,20,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,HIGH,"Cramps, Mood Swings",None
+2/19/2026 12:53:10,Supriti Ghosh ,February,20,NORMAL CYCLE,NON-PREGNANT,2/14/0026,12/18/0026,Medium,HIGH,"Cramps, Mood Swings","Premenstrual Syndrome(PMS), Dysmenorrhea"
+2/19/2026 13:07:35,S. D.,February,20,NORMAL CYCLE,NON-PREGNANT,2/17/2026,2/22/2026,HIGH,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Nausea","PCOS, ANEMIA"
+2/19/2026 13:28:34,TS,February,22,NORMAL CYCLE,NON-PREGNANT,02-08-2026,2/13/2026,HIGH,Medium,"Fatigue, Cramps, Mood Swings, Acne",None
+2/19/2026 13:53:06,Pushparita Roy ,February,22,NORMAL CYCLE,NON-PREGNANT,2/24/2026,2/27/2026,HIGH,Medium,"Cramps, Headache, Mood Swings, Acne",None
+2/19/2026 15:10:41,Ishika,February,23,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,"Cramps, Headache, Acne, Nausea",Others
+2/19/2026 17:27:21,N.k,February,21,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/16/2026,Medium,HIGH,"Cramps, Headache, Mood Swings, Acne, Nausea",PCOS
+2/19/2026 18:07:45,M.S.,January,39,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/29/2026,HIGH,Medium,"Fatigue, Cramps, Headache, Mood Swings, Nausea",None
+2/19/2026 20:21:34,Smriti Chanak ,January,21,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,Headache,HORMONAL DISORDER
+2/19/2026 20:26:20,Sampa Das,January,30,NORMAL CYCLE,NON-PREGNANT,1/31/2026,02-08-2026,HIGH,Low,NONE,None
+2/19/2026 20:28:15,Smriti Chanak ,January,21,NORMAL CYCLE,NON-PREGNANT,02-04-2026,02-08-2026,Medium,Low,NONE,None
+2/19/2026 20:30:51,Srabani Das,January,40,NORMAL CYCLE,NON-PREGNANT,1/19/2026,1/23/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings",None
+2/19/2026 21:09:47,MR,January,47,NORMAL CYCLE,NON-PREGNANT,01-07-2026,02-11-2026,Low,Low,NONE,None
+2/19/2026 22:43:11,Kavya,January,20,NORMAL CYCLE,NON-PREGNANT,1/23/2026,1/30/2026,HIGH,Low,Mood Swings,None
+2/19/2026 22:53:25,U.G,February,20,NORMAL CYCLE,NON-PREGNANT,02-03-2026,02-05-2026,Medium,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Nausea",None
+2/19/2026 22:55:05,S.K,January,37,NORMAL CYCLE,NON-PREGNANT,02-05-2026,02-10-2026,Medium,Medium,"Mood Swings, Nausea",None
+2/19/2026 22:55:32,Torsa,February,20,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,HIGH,"Cramps, Mood Swings, Nausea, Others",ANEMIA
+2/19/2026 22:55:58,MH,January,41,NORMAL CYCLE,NON-PREGNANT,2/20/2026,2/22/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings",None
+2/19/2026 23:02:24,C.C,February,20,NORMAL CYCLE,NON-PREGNANT,02-06-2026,02-12-2026,Medium,Medium,"Fatigue, Cramps, Headache",PCOS
+2/19/2026 23:02:30,Tiyasha Singh ,January,28,NORMAL CYCLE,NON-PREGNANT,02-08-2011,2/19/2043,HIGH,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne, Weight Change, Nausea","ANEMIA, Premenstrual Syndrome(PMS)"
+2/19/2026 23:03:22,P M,February,24,NORMAL CYCLE,NON-PREGNANT,2/18/2026,2/23/2026,Medium,Medium,"Cramps, Headache, Mood Swings",Others
+2/19/2026 23:03:38,P.C,February,20,NORMAL CYCLE,NON-PREGNANT,2/16/2026,2/21/2026,Medium,HIGH,"Cramps, Headache, Mood Swings",None
+2/19/2026 23:04:29,M.P,February,21,NORMAL CYCLE,NON-PREGNANT,2/20/2026,2/25/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings",None
+2/19/2026 23:06:06,Swastika das ,February,17,NORMAL CYCLE,NON-PREGNANT,2/20/2026,2/26/2026,HIGH,HIGH,"Fatigue, Cramps, Headache, Mood Swings, Acne",Others
+2/19/2026 23:09:11,Agrita Sinha Roy ,February,21,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,"Cramps, Headache, Mood Swings","PCOS, HORMONAL DISORDER"
+2/19/2026 23:11:53,Sreyashee Siva,February,20,NORMAL CYCLE,NON-PREGNANT,02-01-2026,02-05-2026,HIGH,HIGH,Cramps,None
+2/19/2026 23:16:08,Moupiya ,February,20,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/17/2026,Medium,HIGH,"Fatigue, Cramps, Mood Swings, Nausea, Others",None
+2/19/2026 23:18:01,N.P,February,20,NORMAL CYCLE,NON-PREGNANT,8/14/2017,1/28/2026,Medium,HIGH,"Fatigue, Cramps, Mood Swings, Weight Change",None
+2/19/2026 23:25:35,B.R,February,20,NORMAL CYCLE,NON-PREGNANT,01-12-2026,1/19/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings, Acne",ANEMIA
+2/19/2026 23:37:14,AD,February,24,NORMAL CYCLE,NON-PREGNANT,11/29/2014,2/15/2026,Medium,Low,"Mood Swings, Nausea","PCOS, HORMONAL DISORDER"
+2/19/2026 23:45:26,J.P,February,20,NORMAL CYCLE,NON-PREGNANT,02-12-2026,02-10-2026,Medium,Medium,"Fatigue, Cramps, Mood Swings, Acne",ANEMIA
+2/19/2026 23:50:31,T. D,February,20,NORMAL CYCLE,NON-PREGNANT,2/21/2026,2/26/2026,Medium,Medium,"Fatigue, Cramps, Mood Swings, Acne",None
+2/20/2026 0:22:33,Koyena Roy ,February,20,NORMAL CYCLE,NON-PREGNANT,2/26/2026,03-01-2026,Low,Low,Headache,None
+2/20/2026 6:29:20,A.S,February,22,NORMAL CYCLE,NON-PREGNANT,02-12-2026,2/16/2026,Medium,Medium,Cramps,Pelvic Inflammatory Disease(PID)
+2/20/2026 10:54:51,Srija das,February,22,NORMAL CYCLE,NON-PREGNANT,02-03-2026,02-05-2026,Medium,Medium,"Cramps, Headache, Mood Swings",None
+2/20/2026 11:04:54,Sanchita Samanta,February,27,NORMAL CYCLE,NON-PREGNANT,2/14/2026,2/20/2026,Medium,Low,Mood Swings,ANEMIA
+2/20/2026 11:27:19,Anima,January,19,NORMAL CYCLE,NON-PREGNANT,02-02-2026,02-08-2026,Medium,Medium,"Cramps, Headache, Acne",None
+2/20/2026 17:08:30,MB,February,22,NORMAL CYCLE,NON-PREGNANT,02-05-2026,02-10-2026,Medium,Medium,"Cramps, Nausea",None
+2/20/2026 21:32:40,Susmita ,January,27,NORMAL CYCLE,NON-PREGNANT,1/20/2026,1/24/2026,Medium,Low,"Mood Swings, Acne",None
+2/20/2026 21:54:10,S.T,February,40,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/27/2026,Medium,Low,NONE,None
+2/20/2026 22:43:35,P. M,February,37,NORMAL CYCLE,NON-PREGNANT,2/16/2026,2/20/2026,Medium,Low,NONE,None
+2/20/2026 23:51:27,A.C,February,41,NORMAL CYCLE,NON-PREGNANT,1/28/2026,02-02-2026,Medium,Low,NONE,None
+2/21/2026 13:53:23,S.D,February,23,NORMAL CYCLE,NON-PREGNANT,02-10-2026,2/13/2026,Medium,Low,Mood Swings,None
+2/21/2026 23:25:45,S.I,February,22,MISSED CYCLE,NON-PREGNANT,NULL,NULL,NULL,Medium,NONE,None
+2/22/2026 12:35:04,S.B,February,41,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/19/2026,Medium,Medium,"Fatigue, Cramps",None
+2/22/2026 13:55:14,Snigdha Saha ,January,39,NORMAL CYCLE,NON-PREGNANT,1/25/2026,1/29/2026,Medium,Medium,"Fatigue, Mood Swings",PCOS
+2/22/2026 18:11:36,M.D,February,40,NORMAL CYCLE,NON-PREGNANT,2/6/0026,2/11/0026,Medium,Medium,"Cramps, Headache, Mood Swings",None
+2/23/2026 9:59:13,A G,February,40,NORMAL CYCLE,NON-PREGNANT,02-07-2026,02-11-2026,Medium,Low,NONE,Others
+2/23/2026 20:38:36,S. K,February,20,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/15/2026,Medium,Medium,NONE,None
+2/23/2026 20:40:52,R. P,February,21,NORMAL CYCLE,NON-PREGNANT,1/27/2026,1/31/2026,HIGH,Medium,"Fatigue, Cramps, Mood Swings, Acne",None
+2/23/2026 22:52:13,Debjanee Pyne,February,40,NORMAL CYCLE,NON-PREGNANT,2/16/2026,2/20/2026,Medium,Medium,NONE,None
+2/24/2026 10:17:16,Sonia ,February,41,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/19/2026,Medium,Medium,"Cramps, Nausea",None
+2/24/2026 18:57:27,T.B,February,20,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/16/2026,Medium,HIGH,Mood Swings,PCOS
+2/25/2026 9:52:07,Debjanee Pyne,February,40,NORMAL CYCLE,NON-PREGNANT,2/16/2026,2/20/2026,Medium,Medium,NONE,None
+2/26/2026 12:29:22,D.D,January,27,NORMAL CYCLE,NON-PREGNANT,1/24/2026,1/29/2026,Medium,Low,"Cramps, Mood Swings, NONE",None
+2/26/2026 16:50:38,S.D,January,25,NORMAL CYCLE,NON-PREGNANT,1/26/2026,1/30/2026,Medium,Medium,"Cramps, Others",None
+2/26/2026 18:05:56,M.B,January,25,NORMAL CYCLE,NON-PREGNANT,1/18/2026,1/22/2026,Medium,Low,Acne,None
+2/26/2026 18:37:11,Nabanita,February,25,NORMAL CYCLE,NON-PREGNANT,2/15/2026,2/19/2026,Medium,Medium,"Cramps, Acne, Weight Change, Others",None
+2/27/2026 14:11:36,A.R,February,21,NORMAL CYCLE,NON-PREGNANT,02-11-2026,2/17/2026,Medium,Medium,"Cramps, Headache, Mood Swings",None
+2/27/2026 17:32:07,A.C,February,20,NORMAL CYCLE,NON-PREGNANT,2/25/2026,03-02-2026,Medium,HIGH,"Fatigue, Cramps, Headache, Nausea",None
+2/27/2026 19:11:08,P. Biswas ,February,18,NORMAL CYCLE,NON-PREGNANT,02-04-2026,02-10-2026,Medium,Medium,"Cramps, Headache, Mood Swings, Acne, Weight Change, Nausea","PCOS, HORMONAL DISORDER"
+2/28/2026 20:10:21,I,February,21,NORMAL CYCLE,NON-PREGNANT,2/19/2026,2/25/2026,Medium,Low,Headache,None
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
