@@ -98,15 +98,13 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { PeriodLog, AnalysisResult } from "../types";
 
 export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
-  // ১. Key ডাকার সবচেয়ে নিরাপদ উপায়
   const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
 
   if (!apiKey) {
-    throw new Error("API Key খুঁজে পাওয়া যাচ্ছে না।");
+    throw new Error("Render Environment Variable (VITE_GEMINI_API_KEY) খুঁজে পাওয়া যাচ্ছে না।");
   }
 
-  // পরিবর্তন ১: এখানে {} সরিয়ে দিয়েছি। গুগল সরাসরি 'apiKey' স্ট্রিং চায়। 
-  // এটি না সরালে গুগল থেকে 404 এরর আসবে।
+  // এখানে {} সরিয়ে দিয়েছি, যাতে ব্রাউজারে "API Key must be set" এরর না আসে
   const ai = new GoogleGenAI(apiKey); 
   
   const historyString = logs.map(l => 
@@ -116,10 +114,8 @@ export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, locatio
   const locationContext = location ? `The user is located in or near: ${location}.` : "";
 
   try {
-    // পরিবর্তন ২: মডেলের নাম 'gemini-1.5-flash' করে দিয়েছি। 
-    // তোমার আগের কোডে 'latest' থাকায় গুগল ওটা খুঁজে পাচ্ছিল না।
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash', 
+      model: 'gemini-3-flash', // তোমার চাওয়া পুরনো মডেলটি এখানে বসিয়ে দিলাম
       contents: `Analyze health for a ${age}-year-old female. ${locationContext}\nData:\n${historyString}`,
       config: {
         responseMimeType: "application/json",
@@ -137,8 +133,7 @@ export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, locatio
                   riskLevel: { type: Type.STRING, enum: ["Low", "Moderate", "High"] },
                   reasoning: { type: Type.STRING },
                   recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }
-                },
-                required: ["condition", "riskLevel", "reasoning", "recommendations"]
+                }
               }
             },
             wellnessPlan: {
@@ -151,8 +146,7 @@ export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, locatio
                     properties: {
                       meal: { type: Type.STRING },
                       recommendation: { type: Type.STRING }
-                    },
-                    required: ["meal", "recommendation"]
+                    }
                   }
                 },
                 yogaPoses: {
@@ -162,26 +156,23 @@ export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, locatio
                     properties: {
                       name: { type: Type.STRING },
                       benefit: { type: Type.STRING }
-                    },
-                    required: ["name", "benefit"]
+                    }
                   }
                 },
                 foodHabits: { type: Type.ARRAY, items: { type: Type.STRING } }
-              },
-              required: ["dietChart", "yogaPoses", "foodHabits"]
+              }
             },
             disclaimer: { type: Type.STRING }
-          },
-          required: ["overallHealthScore", "summary", "risks", "wellnessPlan", "disclaimer"]
+          }
         }
       }
     });
 
     const text = response.text;
-    if (!text) throw new Error("Empty response");
+    if (!text) throw new Error("Empty response from AI");
     return JSON.parse(text.trim());
   } catch (err: any) {
-    console.error("Gemini Error:", err);
-    throw new Error(`API Error: ${err?.message || "Unknown error"}`);
+    console.error("Gemini API Error details:", err);
+    throw new Error(`API Error: ${err?.message || "Something went wrong"}`);
   }
 };
