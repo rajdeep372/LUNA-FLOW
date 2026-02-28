@@ -289,7 +289,6 @@ import { PeriodLog, AnalysisResult, UserProfile } from '../types';
 import { analyzeHealthRisks } from '../services/gemini';
 import { api } from '../services/api'; 
 import { Sparkles, AlertTriangle, ShieldCheck, Utensils, Zap, Loader2, Flower2, Apple, CheckCircle2, MapPin, Brain, Activity, Save } from 'lucide-react';
-// --- NEW: PDF বানানোর জন্য এই দুটো ইম্পোর্ট যোগ করা হয়েছে ---
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -309,7 +308,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
 
   const isAnalysisGranted = logs.length >= 2;
 
-  // --- STRICTLY UNCHANGED: ML for Score/Prediction & Gemini for Diet/Yoga/Foods ---
   const performAnalysis = async () => {
     if (logs.length < 2) {
       setError("Please add at least 2 period logs for a pattern analysis.");
@@ -379,7 +377,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     }
   };
 
-  // --- UPDATED: Save to Database AND Download PDF ---
   const handleSaveAnalysis = async () => {
     if (!analysis || !mlPrediction) return;
     setIsSaving(true);
@@ -402,14 +399,11 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
 
       if (!userId) throw new Error("User ID not found. Please log out and log in again.");
 
-      // 1. Save to Database
       await api.saveAnalysis(userId as string, analysis, mlPrediction);
       setSaveMessage({ type: 'success', text: 'Saved successfully! Downloading PDF...' });
       
-      // 2. Magic Trick: Generate and Download PDF
       const reportElement = document.getElementById('analysis-report-content');
       if (reportElement) {
-          // একটু সময় দেওয়া হচ্ছে যাতে UI আপডেট হয়ে যায়
           setTimeout(async () => {
               try {
                   const canvas = await html2canvas(reportElement, { scale: 2, useCORS: true });
@@ -512,7 +506,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
       )}
 
       {analysis && (
-        {/* NEW: Added id="analysis-report-content" so the PDF generator knows which part to screenshot */}
         <div id="analysis-report-content" className="space-y-8 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 p-4 bg-[#fafafa]">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -536,7 +529,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
                 </div>
                 <p className="text-indigo-50 leading-relaxed text-sm opacity-90 flex-grow">{analysis.summary}</p>
                 
-                {/* Save Analysis Button */}
                 <div data-html2canvas-ignore="true" className="flex flex-col gap-2 mt-4 self-center md:self-start">
                   <div className="flex items-center gap-3">
                     <button onClick={() => setAnalysis(null)} className="text-white bg-white/10 hover:bg-white/20 text-xs font-bold border border-white/20 rounded-xl px-4 py-2 transition-all">
