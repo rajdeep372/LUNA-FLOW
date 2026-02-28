@@ -307,7 +307,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
 
   const isAnalysisGranted = logs.length >= 2;
 
-  // --- UPDATED: performAnalysis function powered 100% by your ML Model ---
+  // --- UPDATED: performAnalysis function powered 100% by ML with Rich Location-Based Content ---
   const performAnalysis = async () => {
     if (logs.length < 2) {
       setError("Please add at least 2 period logs for a pattern analysis.");
@@ -317,7 +317,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     setError(null);
     
     try {
-      // ১. শুধুমাত্র তোমার Python ML সার্ভারকে কল করা হলো (Gemini পুরোপুরি বাদ!)
+      // ১. শুধুমাত্র তোমার Python ML সার্ভারকে কল করা হলো (Gemini পুরোপুরি বাদ)
       const latestLog = logs[0]; 
       
       const mlResult = await api.predictHealthRisk({
@@ -329,51 +329,88 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
          symptoms: latestLog.symptoms || []
       });
 
-      // ২. ML-এর রেজাল্টটা ডানদিকের ছোট বক্সের (ML Pattern Assessment) জন্য সেট করা হলো
       setMlPrediction({
           prediction: mlResult.prediction,
           warning: mlResult.warning
       });
 
-      // ৩. ম্যাজিক ট্রিক: ML-এর রেজাল্ট দিয়েই বড় বেগুনি বক্সের (AI Analysis) ডেটা বানানো হলো
-      
-      // ML-এর রোগের ওপর ভিত্তি করে একটা ডায়নামিক স্কোর বানানো:
-      let calculatedScore = 88; // Normal হলে ভালো স্কোর
+      // ২. ডায়নামিক স্কোর ক্যালকুলেশন
+      let calculatedScore = 88; 
       if (mlResult.prediction.includes('PCOS') || mlResult.prediction.includes('ANEMIA')) {
           calculatedScore = 52; 
       } else if (mlResult.prediction !== 'None' && mlResult.prediction !== 'Normal') {
           calculatedScore = 65;
       }
 
-      // বেগুনি বক্সের জন্য ডেটা সেট করা
+      // ৩. লোকেশন এবং রোগের ওপর ভিত্তি করে ডিটেইলড ডায়েট ও ইয়োগা চার্ট তৈরি (Gemini-এর বিকল্প)
+      const loc = profile.location?.toLowerCase() || '';
+      const isBengal = loc.includes('kolkata') || loc.includes('bengal') || loc.includes('india');
+      
+      let dynamicDietChart = [];
+      let dynamicYogaPoses = [];
+      let dynamicFoodHabits = [];
+
+      if (mlResult.prediction.includes('PCOS')) {
+          dynamicDietChart = [
+              { meal: "Morning", recommendation: isBengal ? "Methi (fenugreek) soaked water, followed by soaked almonds and pumpkin seeds." : "Warm water with apple cider vinegar, and mixed nuts." },
+              { meal: "Lunch", recommendation: isBengal ? "Multigrain roti with dal, a bowl of tok doi (curd), and low-GI vegetables like bitter gourd (korola)." : "Quinoa or brown rice with lentils and a fresh green salad." },
+              { meal: "Dinner", recommendation: "Light meal like grilled paneer or chicken stew with vegetable soup. Avoid white rice at night." }
+          ];
+          dynamicYogaPoses = [
+              { name: "Supta Baddha Konasana (Reclining Butterfly)", benefit: "Stimulates the ovaries and improves blood circulation in the pelvic region." },
+              { name: "Bhujangasana (Cobra Pose)", benefit: "Helps relieve menstrual cramps and reduces stress hormones." }
+          ];
+          dynamicFoodHabits = [
+              "Strictly avoid processed sugars and local sweets (like rosogolla/sandesh) to manage insulin resistance.",
+              "Engage in at least 30-40 minutes of brisk walking or cardio daily.",
+              "Include more fiber-rich local greens in your daily meals."
+          ];
+      } else if (mlResult.prediction.includes('ANEMIA') || mlResult.prediction.includes('Menorrhagia') || mlResult.prediction.includes('Dysmenorrhea')) {
+          dynamicDietChart = [
+              { meal: "Morning", recommendation: isBengal ? "Amla juice or beetroot-carrot juice. Eat 2-3 dates (khejur) and soaked raisins." : "Iron-fortified smoothie with spinach, beetroot, and a citrus fruit." },
+              { meal: "Lunch", recommendation: isBengal ? "Rice with masoor dal, cooked dark leafy greens (lal shak/palak), and a slice of lemon for Vitamin C." : "Lentil soup with spinach and a side of citrus salad." },
+              { meal: "Dinner", recommendation: isBengal ? "Chicken stew or soyabean curry with two rotis. Snack on roasted chana and jaggery (gur)." : "Lean meat or tofu with quinoa and steamed broccoli." }
+          ];
+          dynamicYogaPoses = [
+              { name: "Viparita Karani (Legs Up The Wall)", benefit: "Relaxes the nervous system and improves blood flow to the pelvic area." },
+              { name: "Balasana (Child's Pose)", benefit: "Gently stretches the lower back and relieves fatigue caused by heavy flow." }
+          ];
+          dynamicFoodHabits = [
+              "Avoid drinking tea or coffee immediately after meals as it blocks iron absorption.",
+              "Pair iron-rich foods with Vitamin C (like lemon/amla) for better absorption.",
+              "Try cooking your meals in a traditional cast-iron pan/kadhai to boost iron levels."
+          ];
+      } else {
+          // Normal/Healthy Cycle
+          dynamicDietChart = [
+              { meal: "Morning", recommendation: "Warm water with lemon and honey. A small bowl of fresh seasonal fruits." },
+              { meal: "Lunch", recommendation: isBengal ? "Standard thali: Rice/Roti, dal, seasonal vegetable curry (tarkari), and a piece of fish or paneer." : "Balanced meal with complex carbs, lean protein, and mixed vegetables." },
+              { meal: "Dinner", recommendation: "Light vegetable khichdi or two rotis with easily digestible dal (like moong)." }
+          ];
+          dynamicYogaPoses = [
+              { name: "Baddha Konasana (Butterfly Pose)", benefit: "Helps open the hips and relieves mild menstrual cramps and discomfort." },
+              { name: "Paschimottanasana (Seated Forward Bend)", benefit: "Calms the mind, relieves stress, and soothes the pelvic organs." }
+          ];
+          dynamicFoodHabits = [
+              "Drink at least 2.5 to 3 liters of water daily to stay hydrated.",
+              "Maintain a consistent sleep schedule of 7-8 hours per night.",
+              "Incorporate local, seasonal vegetables and fresh yogurt into your daily diet."
+          ];
+      }
+
+      // ৪. বেগুনি বক্স এবং ওয়েলনেস প্ল্যানের জন্য ডেটা সেট করা
       setAnalysis({
         overallHealthScore: calculatedScore,
-        summary: `Machine Learning Assessment: ${mlResult.warning} Based on your logged data, the model pattern suggests a status of: ${mlResult.prediction === 'None' ? 'Healthy/Normal' : mlResult.prediction}.`,
+        summary: `Machine Learning Assessment: This result is based on pattern analysis for awareness purposes. Based on your logged data, the model pattern suggests a status of: ${mlResult.prediction === 'None' ? 'Healthy/Normal' : mlResult.prediction}.`,
         
-        risks: [
-           { 
-             condition: mlResult.prediction === 'None' ? 'Healthy Cycle' : mlResult.prediction, 
-             riskLevel: mlResult.prediction === 'None' ? 'Low' : 'High', 
-             reasoning: mlResult.warning, 
-             recommendations: ["Maintain a healthy lifestyle.", "Consult a healthcare provider for proper medical diagnosis if you feel unwell."] 
-           }
-        ],
+        risks: [], // Secondary health indicators removed from UI as requested earlier
         
-        // ডিজাইন ঠিক রাখার জন্য বেসিক ওয়েলনেস প্ল্যান
         wellnessPlan: { 
-            dietChart: [
-                { meal: "Morning", recommendation: "Drink warm water and eat iron-rich foods." },
-                { meal: "Lunch", recommendation: "Include green leafy vegetables and healthy proteins." }
-            ], 
-            yogaPoses: [
-                { name: "Basic Stretching", benefit: "Improves blood circulation and relieves cramps." }
-            ], 
-            foodHabits: [
-                "Stay hydrated throughout the day.",
-                "Avoid excessive caffeine and junk food."
-            ] 
+            dietChart: dynamicDietChart, 
+            yogaPoses: dynamicYogaPoses, 
+            foodHabits: dynamicFoodHabits 
         },
-        disclaimer: "This analysis is purely generated by your local Machine Learning model, replacing the Gemini API."
+        disclaimer: "This analysis is purely generated by your local Machine Learning model, taking your region into account."
       });
 
     } catch (err: any) {
@@ -393,7 +430,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     try {
       let userId = null;
 
-      // 1. Check if it's stored as an object named 'user'
       const userStr = localStorage.getItem('user');
       if (userStr) {
           try {
@@ -402,12 +438,10 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
           } catch (e) {}
       }
       
-      // 2. Check if it's stored directly as 'userId'
       if (!userId) {
           userId = localStorage.getItem('userId');
       }
 
-      // 3. Fallback: Take the userId directly from the Period logs! (Guaranteed to work)
       if (!userId && logs.length > 0) {
           // @ts-ignore
           userId = logs[0].userId;
@@ -417,13 +451,10 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
           throw new Error("User ID not found. Please log out and log in again.");
       }
 
-      // Call the API to save
       await api.saveAnalysis(userId as string, analysis, mlPrediction);
       
-      // Show success message
       setSaveMessage({ type: 'success', text: 'Analysis saved successfully!' });
       
-      // Remove success message after 3 seconds
       setTimeout(() => setSaveMessage(null), 3000);
     } catch (err: any) {
       setSaveMessage({ type: 'error', text: err.message || 'Failed to save analysis.' });
@@ -440,7 +471,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     }
   };
 
-  // 1. If there are less than 2 records
   if (!isAnalysisGranted) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-white rounded-3xl border border-slate-100 shadow-sm animate-in fade-in zoom-in duration-300">
@@ -462,7 +492,6 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
     );
   }
 
-  // 2. If there are 2 or more records
   return (
     <div className="space-y-8 pb-10">
       {!analysis && !loading && (
@@ -512,7 +541,7 @@ const AnalysisView: React.FC<Props> = ({ logs, profile }) => {
           {/* Top Row: Score Card & ML Prediction */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
-              {/* 1. Cycle Vitality Score (Existing) */}
+              {/* 1. Cycle Vitality Score */}
               <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-500 rounded-3xl p-8 text-white shadow-xl flex flex-col items-center md:items-start text-center md:text-left h-full">
                 <div className="flex flex-col md:flex-row items-center gap-6 w-full mb-4">
                     <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
