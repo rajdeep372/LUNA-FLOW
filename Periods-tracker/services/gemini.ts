@@ -2,33 +2,32 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { PeriodLog, AnalysisResult } from "../types";
 
 export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
-  // Use process.env.API_KEY directly as mapped in vite.config.ts
-// gemini.ts ফাইলের শুরুতে এটি লেখো
-const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
-console.log("Checking API Key availability...");
-  if (!apiKey) {
-  throw new Error("Render Environment Variable (VITE_GEMINI_API_KEY) খুঁজে পাওয়া যাচ্ছে না।");
-}
+  const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY || (process.env as any).API_KEY;
 
-  const ai = new GoogleGenAI({ apiKey });
-  
+  if (!apiKey || apiKey === 'undefined') {
+    throw new Error("API Key is missing in Render Environment.");
+  }
+
+  // ১. সরাসরি apiKey দাও (অবজেক্ট {} দেবে না)
+  const genAI = new GoogleGenAI(apiKey); 
+
   const historyString = logs.map(l => 
-    `Cycle: ${l.cycleLength} days, Duration: ${l.duration} days, Flow: ${l.flowIntensity}, Pain: ${l.painLevel}, Symptoms: ${l.symptoms.join(', ')}`
+    `Cycle: ${l.cycleLength}d, Duration: ${l.duration}d, Flow: ${l.flowIntensity}, Pain: ${l.painLevel}, Symptoms: ${l.symptoms.join(', ')}`
   ).join('\n');
 
-  const locationContext = location ? `The user is located in or near: ${location}. Please ensure the diet recommendations (ingredients, meals) are locally available, culturally appropriate, and relevant to this region.` : "";
+  const locationContext = location ? `User location: ${location}.` : "";
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash-latest', 
-      contents: `Analyze the following menstrual health data for a ${age}-year-old female and detect potential health risks. 
-      Crucially, provide a personalized wellness plan including specific food habits, a daily diet chart (Breakfast, Lunch, Dinner, Snacks), and specific Yoga poses suited for their symptoms.
-      
-      ${locationContext}
+    // ২. একদম স্টেবল মডেলের নাম ব্যবহার করো
+   // এভাবে লিখে দেখো লাল দাগ যায় কি না
+const model = (genAI as any).getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      Current Data:
-      ${historyString}`,
-      config: {
+    const prompt = `Analyze menstrual health for a ${age}-year-old female. ${locationContext} Data:\n${historyString}`;
+
+    // ৩. নতুন পদ্ধতিতে জেনারেট করো যা 404 এরর দেবে না
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -41,7 +40,7 @@ console.log("Checking API Key availability...");
                 type: Type.OBJECT,
                 properties: {
                   condition: { type: Type.STRING },
-                  riskLevel: { type: Type.STRING, enum: ["Low", "Moderate", "High"] },
+                  riskLevel: { type: Type.STRING },
                   reasoning: { type: Type.STRING },
                   recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }
                 },
@@ -80,17 +79,16 @@ console.log("Checking API Key availability...");
             disclaimer: { type: Type.STRING }
           },
           required: ["overallHealthScore", "summary", "risks", "wellnessPlan", "disclaimer"]
-        }
+        },
       }
     });
 
-    const text = response.text;
-    if (!text) throw new Error("Empty response from AI");
+    const response = await result.response;
+    const text = response.text();
     return JSON.parse(text.trim());
+    
   } catch (err: any) {
     console.error("Gemini API Error details:", err);
-    // Extract a readable message from the error object
-    const errorMessage = err?.message || "Unknown API error";
-    throw new Error(`API Error: ${errorMessage}`);
+    throw new Error(`API Error: ${err?.message || "Something went wrong"}`);
   }
 };
