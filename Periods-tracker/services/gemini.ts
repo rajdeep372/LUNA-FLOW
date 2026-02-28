@@ -4,9 +4,10 @@ import { PeriodLog, AnalysisResult } from "../types";
 export const analyzeHealthRisks = async (logs: PeriodLog[], age: number, location?: string): Promise<AnalysisResult> => {
   // Use process.env.API_KEY directly as mapped in vite.config.ts
 const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'undefined' || apiKey === 'PLACEHOLDER_API_KEY') {
-    throw new Error("API Key is missing or set to placeholder. Please update .env.local and restart your dev server (Ctrl+C then npm run dev).");
-  }
+console.log("Checking API Key availability...");
+  if (!apiKey) {
+  throw new Error("Render Environment Variable (VITE_GEMINI_API_KEY) খুঁজে পাওয়া যাচ্ছে না।");
+}
 
   const ai = new GoogleGenAI({ apiKey });
   
